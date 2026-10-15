@@ -7,6 +7,9 @@ import { Prisma } from "@prisma/client";
 import authRoutes from "./routes/auth.routes.js";
 import productRoutes from "./routes/product.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
+import { HttpError } from "./utils/httpError.js";
+import orderRoutes from "./routes/order.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 const app = express();
 
@@ -22,9 +25,14 @@ app.get("/api/health", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api", orderRoutes);
+app.use("/api/admin", adminRoutes);
 
 // معالج الأخطاء: يجب أن يكون بعد كل المسارات
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  if (err instanceof HttpError) {
+    return res.status(err.status).json({ message: err.message });
+  }
   if (err instanceof ZodError) {
     return res.status(400).json({ message: "Validation error", errors: err.issues });
   }
