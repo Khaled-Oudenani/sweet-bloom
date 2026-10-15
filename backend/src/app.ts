@@ -10,6 +10,7 @@ import categoryRoutes from "./routes/category.routes.js";
 import { HttpError } from "./utils/httpError.js";
 import orderRoutes from "./routes/order.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import multer from "multer";
 
 const app = express();
 
@@ -32,6 +33,10 @@ app.use("/api/admin", adminRoutes);
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   if (err instanceof HttpError) {
     return res.status(err.status).json({ message: err.message });
+  }
+  if (err instanceof multer.MulterError) {
+    const message = err.code === "LIMIT_FILE_SIZE" ? "Image too large (max 5 MB)" : err.message;
+    return res.status(400).json({ message });
   }
   if (err instanceof ZodError) {
     return res.status(400).json({ message: "Validation error", errors: err.issues });
