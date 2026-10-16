@@ -11,6 +11,7 @@ import { HttpError } from "./utils/httpError.js";
 import orderRoutes from "./routes/order.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import multer from "multer";
+import publicRoutes from "./routes/public.routes.js";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api", orderRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api", publicRoutes);
 
 // معالج الأخطاء: يجب أن يكون بعد كل المسارات
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
