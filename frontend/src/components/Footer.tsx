@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { Flower2, Truck } from "lucide-react";
-import NewsletterForm from "./NewsletterForm";
 
 export default function Footer() {
   return (
     <footer className="mt-20 border-t border-line bg-sand">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 md:grid-cols-3 md:px-12">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 md:grid-cols-2 md:px-12">
         <div className="space-y-4">
           <Link href="/" className="flex items-center gap-2">
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blush text-berry">
@@ -31,14 +30,6 @@ export default function Footer() {
             <b className="text-cocoa">Phone &amp; WhatsApp:</b>{" "}
             <a href="tel:+213541929912" className="text-berry">+213 541 92 99 12</a>
           </p>
-        </div>
-
-        <div className="space-y-3">
-          <h3 className="font-display text-lg text-cocoa">The Weekly Oven Preview</h3>
-          <p className="text-sm">
-            Receive weekly fresh bake schedules and seasonal dessert releases in your inbox.
-          </p>
-          <NewsletterForm />
         </div>
       </div>
 
