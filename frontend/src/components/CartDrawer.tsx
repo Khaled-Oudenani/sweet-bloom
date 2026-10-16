@@ -39,8 +39,11 @@ export default function CartDrawer() {
       />
       <aside
         aria-hidden={!isOpen}
-        className={`fixed right-0 top-0 z-50 flex h-full w-full flex-col bg-cream shadow-warm transition-transform duration-300 sm:w-[420px] ${
-          isOpen ? "translate-x-0" : "translate-x-full"
+        // className={`fixed right-0 top-0 z-50 flex h-full w-full flex-col bg-cream shadow-warm transition-transform duration-300 sm:w-[420px] ${
+        //   isOpen ? "translate-x-0" : "translate-x-full"
+        // }`}
+        className={`fixed right-0 top-0 z-50 flex h-full w-full flex-col bg-cream shadow-warm transition-[transform,visibility] duration-300 sm:w-[420px] ${
+        isOpen ? "visible translate-x-0" : "invisible translate-x-full"
         }`}
       >
         <div className="flex items-center justify-between border-b border-line px-5 py-4">

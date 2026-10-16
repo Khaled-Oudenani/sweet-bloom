@@ -35,7 +35,8 @@ export default function Footer() {
 
       <div className="border-t border-line">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-5 py-5 text-xs text-cocoa-muted md:flex-row md:justify-between md:px-12">
-          <p>© {new Date().getFullYear()} Sweet Bloom Confectionery. Guest checkout only.</p>
+          {/* <p>© {new Date().getFullYear()} Sweet Bloom Confectionery. Guest checkout only.</p> */}
+          <p>© 2026 Sweet Bloom Confectionery. Guest checkout only.</p>
           <p>Pure Butter &amp; Artisanal Vanilla • Laghouat, Algeria</p>
         </div>
       </div>

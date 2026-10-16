@@ -26,4 +26,19 @@ body {
   background: var(--color-cream);
   color: var(--color-cocoa-soft);
   font-family: var(--font-sans), sans-serif;
+   max-width: 100%;
+  overflow-x: clip; 
+}
+
+
+html {
+  font-size: 14px; /* الافتراضي 16px */
+   max-width: 100%;
+  overflow-x: clip; 
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 15px;
+  }
 }
