@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Flower2, Truck } from "lucide-react";
+import { SITE } from "@/lib/site";
 
 export default function Footer() {
   return (
@@ -23,12 +24,13 @@ export default function Footer() {
 
         <div className="space-y-3 text-sm">
           <h3 className="font-display text-lg text-cocoa">Atelier &amp; Hours</h3>
-          <p><b className="text-cocoa">Address:</b> Cité El Wafaa, Laghouat, Algeria</p>
+          <p><b className="text-cocoa">Address:</b> Ouasis nord, Laghouat, Algeria</p>
           <p><b className="text-cocoa">Hours:</b> Mon – Sat: 09:00 – 20:00</p>
           <p><b className="text-cocoa">Friday:</b> 14:00 – 20:00</p>
           <p>
             <b className="text-cocoa">Phone &amp; WhatsApp:</b>{" "}
-            <a href="tel:+213541929912" className="text-berry">+213 541 92 99 12</a>
+            {/* <a href="tel:+213541929912" className="text-berry">+213 541 92 99 12</a> */}
+            <a href={`tel:${SITE.phoneTel}`} className="text-berry">{SITE.phoneDisplay}</a>
           </p>
         </div>
       </div>
