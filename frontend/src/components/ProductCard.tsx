@@ -4,14 +4,7 @@ import { Flower2, Star } from "lucide-react";
 import type { Product } from "@/lib/api";
 import { formatDA } from "@/lib/format";
 import AddToCartButton from "./AddToCartButton";
-
-const BADGES: Record<string, string> = {
-  BESTSELLER: "Bestseller",
-  NEW: "New",
-  CHEFS_PICK: "Chef's Pick",
-  POPULAR: "Popular",
-  LIMITED: "Limited Batch",
-};
+import { BADGES } from "@/lib/badges";
 
 export default function ProductCard({ product: p }: { product: Product }) {
   const hasSizes = p.variants.length > 1;
