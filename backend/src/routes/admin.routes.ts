@@ -18,9 +18,12 @@ import {
   updateCoupon, updateZone,
 } from "../controllers/admin.settings.controller.js";
 import { getStats } from "../controllers/admin.stats.controller.js";
+import { listTags } from "../controllers/admin.tags.controller.js";
 
 const router = Router();
 router.use(requireAdmin);
+
+router.get("/tags", listTags);
 
 // الطلبات
 router.get("/orders", listOrders);

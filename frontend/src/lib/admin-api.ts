@@ -116,3 +116,103 @@ export const setOrderStatus = (id: number, status: string) =>
 
 export const setOrderPaid = (id: number, isPaid: boolean) =>
   adminRequest(`/admin/orders/${id}/paid`, { method: "PATCH", body: JSON.stringify({ isPaid }) });
+
+/* ---------- Products ---------- */
+export type TagItem = { id: number; name: string; slug: string };
+
+export type AdminProductListItem = {
+  id: number;
+  name: string;
+  slug: string;
+  imageUrl: string | null;
+  basePrice: number;
+  isActive: boolean;
+  isFeatured: boolean;
+  badge: string | null;
+  category?: { id: number; name: string };
+  variants?: { id: number; price: number; stock: number }[];
+};
+
+export type AdminProductDetail = {
+  id: number;
+  name: string;
+  slug: string;
+  categoryId: number;
+  shortDescription: string | null;
+  description: string | null;
+  ingredients: string | null;
+  allergyInfo: string | null;
+  badge: string | null;
+  isFeatured: boolean;
+  isActive: boolean;
+  imageUrl: string | null;
+  variants: { id: number; label: string; serves: string | null; price: number; stock: number }[];
+  images: { id: number; url: string; alt: string | null; isCover?: boolean }[];
+  dietaryTags: TagItem[];
+  flavors: TagItem[];
+};
+
+export type ProductPayload = {
+  name?: string;
+  slug?: string;
+  categoryId?: number;
+  shortDescription?: string;
+  description?: string;
+  ingredients?: string;
+  allergyInfo?: string;
+  badge?: string | null;
+  isFeatured?: boolean;
+  isActive?: boolean;
+  variants?: { label: string; serves?: string; price: number; stock: number }[];
+  dietaryTagIds?: number[];
+  flavorIds?: number[];
+};
+
+export const getAdminProducts = (q: { search?: string; status?: string; page?: number; limit?: number }) =>
+  adminRequest<{ data: AdminProductListItem[]; meta: Meta }>(`/admin/products${qs(q)}`);
+
+export const getAdminProduct = (id: number) =>
+  adminRequest<{ data: AdminProductDetail }>(`/admin/products/${id}`).then((r) => r.data);
+
+export const createProduct = (body: ProductPayload) =>
+  adminRequest<{ data?: { id: number } }>("/products", { method: "POST", body: JSON.stringify(body) });
+
+export const updateProduct = (id: number, body: ProductPayload) =>
+  adminRequest(`/products/${id}`, { method: "PUT", body: JSON.stringify(body) });
+
+export const getAdminCategories = () =>
+  adminRequest<{ data: { id: number; name: string }[] }>("/admin/categories").then((r) => r.data);
+
+export const getTags = () =>
+  adminRequest<{ data: { dietaryTags: TagItem[]; flavors: TagItem[] } }>("/admin/tags").then((r) => r.data);
+
+/* ---------- Images (multipart) ---------- */
+async function adminUpload<R>(path: string, form: FormData, method = "POST"): Promise<R> {
+  const token = getToken();
+  const res = await fetch(`${BASE}${path}`, {
+    method,
+    body: form,
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (res.status === 401) {
+    clearToken();
+    window.location.href = "/admin/login";
+    throw new ApiError(401, "Session expired");
+  }
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new ApiError(res.status, json.message ?? "Upload failed", json.errors);
+  return json as R;
+}
+
+export const uploadProductImage = (productId: number, file: File, alt?: string) => {
+  const form = new FormData();
+  form.append("image", file);
+  if (alt) form.append("alt", alt);
+  return adminUpload(`/admin/products/${productId}/images`, form);
+};
+
+export const setCoverImage = (productId: number, imageId: number) =>
+  adminRequest(`/admin/products/${productId}/images/${imageId}/cover`, { method: "PATCH" });
+
+export const deleteProductImage = (productId: number, imageId: number) =>
+  adminRequest(`/admin/products/${productId}/images/${imageId}`, { method: "DELETE" });
