@@ -1,4 +1,5 @@
 import { ApiError } from "@/lib/api";
+import type { Meta } from "@/lib/api";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api";
 const KEY = "sb-admin-token";
@@ -63,3 +64,55 @@ export async function adminLogin(email: string, password: string) {
 
 export const getMe = () => adminRequest<{ admin: AdminUser }>("/auth/me").then((r) => r.admin);
 export const getStats = () => adminRequest<{ data: Stats }>("/admin/stats").then((r) => r.data);
+
+export type AdminOrder = {
+  id: number;
+  orderNumber: string;
+  status: string;
+  paymentMethod: string;
+  isPaid: boolean;
+  customerName: string;
+  phone: string;
+  email: string | null;
+  deliveryType: "DELIVERY" | "PICKUP";
+  wilaya: string | null;
+  address: string | null;
+  deliveryDate: string | null;
+  timeWindow: "MORNING" | "AFTERNOON" | "EVENING" | null;
+  isGift: boolean;
+  giftMessage: string | null;
+  notes: string | null;
+  couponCode: string | null;
+  subtotal: number;
+  discount: number;
+  deliveryFee: number;
+  total: number;
+  createdAt: string;
+  items?: {
+    id: number;
+    productName: string;
+    variantLabel: string;
+    unitPrice: number;
+    quantity: number;
+    inscription: string | null;
+  }[];
+};
+
+const qs = (p: Record<string, string | number | undefined>) => {
+  const s = new URLSearchParams();
+  Object.entries(p).forEach(([k, v]) => v !== undefined && v !== "" && s.set(k, String(v)));
+  const out = s.toString();
+  return out ? `?${out}` : "";
+};
+
+export const getOrders = (q: { status?: string; search?: string; page?: number; limit?: number }) =>
+  adminRequest<{ data: AdminOrder[]; meta: Meta }>(`/admin/orders${qs(q)}`);
+
+export const getOrder = (id: number) =>
+  adminRequest<{ data: AdminOrder }>(`/admin/orders/${id}`).then((r) => r.data);
+
+export const setOrderStatus = (id: number, status: string) =>
+  adminRequest(`/admin/orders/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) });
+
+export const setOrderPaid = (id: number, isPaid: boolean) =>
+  adminRequest(`/admin/orders/${id}/paid`, { method: "PATCH", body: JSON.stringify({ isPaid }) });

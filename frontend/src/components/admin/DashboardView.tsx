@@ -113,7 +113,10 @@ export default function DashboardView() {
           <tbody className="divide-y divide-line">
             {stats.recentOrders.map((o) => (
               <tr key={o.id}>
-                <td className="py-2 font-semibold text-cocoa">{o.orderNumber}</td>
+                {/* <td className="py-2 font-semibold text-cocoa">{o.orderNumber}</td> */}
+                <td className="py-2 font-semibold">
+                 <Link href={`/admin/orders/${o.id}`} className="text-berry hover:underline">{o.orderNumber}</Link>
+                </td>
                 <td className="py-2">{o.customerName}</td>
                 <td className="py-2">{formatDA(o.total)}</td>
                 <td className="py-2"><StatusBadge status={o.status} /></td>
