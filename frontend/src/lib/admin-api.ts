@@ -296,3 +296,51 @@ export const getCustomRequests = (q: { status?: string; page?: number; limit?: n
 
 export const setRequestStatus = (id: number, status: RequestStatus) =>
   adminRequest(`/admin/custom-requests/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) });
+
+/* ---------- Coupons ---------- */
+export type AdminCoupon = {
+  id: number;
+  code: string;
+  type: "PERCENT" | "FIXED";
+  value: number;
+  minOrder: number | null;
+  maxUses: number | null;
+  usedCount?: number;
+  expiresAt: string | null;
+  isActive: boolean;
+};
+
+export type CouponPayload = {
+  code?: string;
+  type?: "PERCENT" | "FIXED";
+  value?: number;
+  minOrder?: number | null;
+  maxUses?: number | null;
+  expiresAt?: string | null;
+  isActive?: boolean;
+};
+
+export const getCoupons = () => adminRequest<{ data: AdminCoupon[] }>("/admin/coupons").then((r) => r.data);
+export const createCoupon = (b: CouponPayload) =>
+  adminRequest("/admin/coupons", { method: "POST", body: JSON.stringify(b) });
+export const updateCoupon = (id: number, b: CouponPayload) =>
+  adminRequest(`/admin/coupons/${id}`, { method: "PUT", body: JSON.stringify(b) });
+export const deleteCoupon = (id: number) => adminRequest(`/admin/coupons/${id}`, { method: "DELETE" });
+
+/* ---------- Delivery zones ---------- */
+export type AdminZone = {
+  id: number;
+  wilaya: string;
+  fee: number;
+  freeAbove: number | null;
+  isActive: boolean;
+};
+
+export type ZonePayload = { wilaya?: string; fee?: number; freeAbove?: number | null; isActive?: boolean };
+
+export const getZones = () => adminRequest<{ data: AdminZone[] }>("/admin/delivery-zones").then((r) => r.data);
+export const createZone = (b: ZonePayload) =>
+  adminRequest("/admin/delivery-zones", { method: "POST", body: JSON.stringify(b) });
+export const updateZone = (id: number, b: ZonePayload) =>
+  adminRequest(`/admin/delivery-zones/${id}`, { method: "PUT", body: JSON.stringify(b) });
+export const deleteZone = (id: number) => adminRequest(`/admin/delivery-zones/${id}`, { method: "DELETE" });
