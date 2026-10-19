@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { prisma } from "../config/prisma";
-import { slugify } from "../utils/slugify";
+import { prisma } from "../config/prisma.js";
+import { slugify } from "../utils/slugify.js";
 
 const csv = z
   .string()

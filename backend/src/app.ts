@@ -16,8 +16,14 @@ import publicRoutes from "./routes/public.routes.js";
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: "http://localhost:3000" }));
+const allowedOrigins = (process.env.CORS_ORIGIN ?? "http://localhost:3000")
+  .split(",")
+  .map((s) => s.trim());
+
+app.use(cors({ origin: allowedOrigins }));
+// app.use(cors({ origin: "http://localhost:3000" }));
 app.use(express.json());
+app.set("trust proxy", 1);
 app.use(morgan("dev"));
 
 app.get("/api/health", (_req, res) => {
