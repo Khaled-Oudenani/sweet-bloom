@@ -216,3 +216,83 @@ export const setCoverImage = (productId: number, imageId: number) =>
 
 export const deleteProductImage = (productId: number, imageId: number) =>
   adminRequest(`/admin/products/${productId}/images/${imageId}`, { method: "DELETE" });
+
+/* ---------- Categories ---------- */
+export type AdminCategory = {
+  id: number;
+  name: string;
+  slug: string;
+  description: string | null;
+  imageUrl: string | null;
+  sortOrder: number;
+  isActive: boolean;
+  _count?: { products: number };
+  productCount?: number;
+};
+
+export type CategoryPayload = {
+  name?: string;
+  slug?: string;
+  description?: string;
+  imageUrl?: string;
+  sortOrder?: number;
+  isActive?: boolean;
+};
+
+export const getAdminCategoriesFull = () =>
+  adminRequest<{ data: AdminCategory[] }>("/admin/categories").then((r) => r.data);
+
+export const createCategory = (b: CategoryPayload) =>
+  adminRequest("/admin/categories", { method: "POST", body: JSON.stringify(b) });
+
+export const updateCategory = (id: number, b: CategoryPayload) =>
+  adminRequest(`/admin/categories/${id}`, { method: "PUT", body: JSON.stringify(b) });
+
+export const deleteCategory = (id: number) =>
+  adminRequest(`/admin/categories/${id}`, { method: "DELETE" });
+
+export const uploadGenericImage = (file: File) => {
+  const form = new FormData();
+  form.append("image", file);
+  return adminUpload<{ data: { url: string; fileId: string } }>("/admin/uploads", form).then((r) => r.data);
+};
+
+/* ---------- Reviews ---------- */
+export type AdminReview = {
+  id: number;
+  authorName: string;
+  rating: number;
+  comment: string | null;
+  isApproved: boolean;
+  createdAt: string;
+  product?: { id?: number; name: string };
+};
+
+export const getAdminReviews = (q: { status?: string; page?: number; limit?: number }) =>
+  adminRequest<{ data: AdminReview[]; meta: Meta }>(`/admin/reviews${qs(q)}`);
+
+export const setReviewApproved = (id: number, isApproved: boolean) =>
+  adminRequest(`/admin/reviews/${id}`, { method: "PATCH", body: JSON.stringify({ isApproved }) });
+
+export const deleteReview = (id: number) =>
+  adminRequest(`/admin/reviews/${id}`, { method: "DELETE" });
+
+/* ---------- Custom cake requests ---------- */
+export type RequestStatus = "NEW" | "CONTACTED" | "DONE";
+export type AdminCustomRequest = {
+  id: number;
+  name: string;
+  phone: string;
+  email: string | null;
+  eventDate: string | null;
+  guests: number | null;
+  description: string;
+  status: RequestStatus;
+  createdAt: string;
+};
+
+export const getCustomRequests = (q: { status?: string; page?: number; limit?: number }) =>
+  adminRequest<{ data: AdminCustomRequest[]; meta: Meta }>(`/admin/custom-requests${qs(q)}`);
+
+export const setRequestStatus = (id: number, status: RequestStatus) =>
+  adminRequest(`/admin/custom-requests/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) });
