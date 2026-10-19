@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sweet Bloom: Frontend
 
-## Getting Started
+Next.js 16 (App Router, Turbopack) storefront and admin panel for Sweet Bloom. It consumes the REST API in `../backend`.
 
-First, run the development server:
+## Stack
+
+Next.js 16 · React · TypeScript · Tailwind CSS v4 · zustand · lucide-react · `next/image` (ImageKit)
+
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create `.env.local`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable | Description | Example |
+| --- | --- | --- |
+| `NEXT_PUBLIC_API_URL` | Base URL of the backend API, with `/api` | `http://localhost:4000/api` |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+> Check the exact variable name your `src/lib/api.ts` reads and keep it identical here and in the hosting dashboard.
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run dev     # http://localhost:3000
+npm run build   # production build (also type-checks)
+npm start       # serve the production build
+npm run lint
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Routes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Storefront** (`src/app/(site)/`)
 
-## Deploy on Vercel
+| Route | Page |
+| --- | --- |
+| `/` | Home |
+| `/shop` | Catalogue with filters in the URL |
+| `/shop/[slug]` | Product page, variants, reviews |
+| `/checkout` | Guest checkout, cash on delivery |
+| `/order-confirmed` | Confirmation |
+| `/custom-cakes` | Custom cake request form |
+| `/contact` | Phone, WhatsApp, map, hours |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Admin** (`src/app/admin/`), JWT-protected
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Route | Page |
+| --- | --- |
+| `/admin/login` | Sign in |
+| `/admin` | Dashboard |
+| `/admin/orders`, `/admin/orders/[id]` | Orders and status |
+| `/admin/products`, `/new`, `/[id]` | Products and image upload |
+| `/admin/categories` | Categories |
+| `/admin/reviews` | Review moderation |
+| `/admin/custom-requests` | Custom cake requests |
+| `/admin/coupons` | Coupons |
+| `/admin/delivery-zones` | Delivery fees per wilaya |
+
+## Structure
+
+```
+src/
+├── app/
+│   ├── (site)/          public pages + layout (Navbar, Footer, CartDrawer)
+│   └── admin/           login/ and (panel)/ with the AdminShell guard
+├── components/          storefront components
+│   └── admin/           admin views and forms
+├── lib/
+│   ├── api.ts           public API client and types
+│   ├── admin-api.ts     admin API client (Bearer token)
+│   ├── format.ts        formatDA → "4,500 DA"
+│   ├── badges.ts        product badge labels
+│   └── site.ts          phone, WhatsApp, address, hours
+└── store/cart.ts        zustand cart (localStorage: sweet-bloom-cart)
+```
+
+## Conventions
+
+- **Design tokens** live in `src/app/globals.css` (`@theme inline`): cream, berry, blush, caramel, pistachio, cocoa. Fonts: Playfair Display (headings) and DM Sans (body).
+- **Prerendering rules (Next 16):** no `new Date()` in Server Components; wrap `usePathname`/`useSearchParams` consumers in `<Suspense>`; wrap data fetching and `await params` in a Suspense child of a sync page.
+- **Cart:** stores display prices only. The server recomputes totals.
+- **Admin auth:** JWT in `localStorage` (`sb-admin-token`). A 401 clears it and redirects to `/admin/login`.
+- Admin pages are `noindex`.
+
+## Deployment (Vercel)
+
+1. Import the repo and set **Root Directory** to `frontend`.
+2. Add `NEXT_PUBLIC_API_URL` (production API URL).
+3. Add the production domain to the backend CORS origin.
+4. Product images load from `ik.imagekit.io`, already allowed in `next.config`.
