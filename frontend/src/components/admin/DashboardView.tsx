@@ -50,7 +50,7 @@ export default function DashboardView() {
         <Kpi label="In pipeline (not yet delivered)" value={formatDA(stats.revenuePipeline)} />
       </div>
 
-      <section className={card}>
+      {/* <section className={card}>
         <h2 className="mb-4 font-display text-xl text-cocoa">Sales — last 14 days</h2>
         <div className="flex h-40 items-end gap-1.5">
           {stats.dailySales.map((d) => (
@@ -62,7 +62,7 @@ export default function DashboardView() {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
       <div className="grid gap-4 lg:grid-cols-3">
         <section className={card}>
