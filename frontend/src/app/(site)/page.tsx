@@ -217,6 +217,7 @@ import { formatDA } from "@/lib/format";
 import ProductCard from "@/components/ProductCard";
 import Stars from "@/components/Stars";
 import { Reveal, Stagger, StaggerItem, Float, Parallax } from "@/components/motion/Motion";
+import { retry } from "@/lib/retry";
 
 export default function HomePage() {
   return (
@@ -227,10 +228,15 @@ export default function HomePage() {
 }
 
 async function HomeContent() {
+  // const [categories, products, testimonials] = await Promise.all([
+  //   getCategories().catch(() => []),
+  //   getProducts({ sort: "featured", limit: 4 }).then((r) => r.data).catch(() => []),
+  //   getTestimonials().catch(() => []),
+  // ]);
   const [categories, products, testimonials] = await Promise.all([
-    getCategories().catch(() => []),
-    getProducts({ sort: "featured", limit: 4 }).then((r) => r.data).catch(() => []),
-    getTestimonials().catch(() => []),
+   retry(() => getCategories()).catch(() => []),
+   retry(() => getProducts({ sort: "featured", limit: 4 })).then((r) => r.data).catch(() => []),
+   retry(() => getTestimonials()).catch(() => []),
   ]);
   const hero = products[0];
 
