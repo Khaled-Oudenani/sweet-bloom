@@ -26,9 +26,7 @@ app.use(express.json());
 app.set("trust proxy", 1);
 app.use(morgan("dev"));
 
-app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok" });
-});
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
@@ -37,6 +35,9 @@ app.use("/api", orderRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api", publicRoutes);
 
+app.get("/api/health", (_req, res) => {
+  res.json({ status: "ok" });
+});
 // معالج الأخطاء: يجب أن يكون بعد كل المسارات
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   if (err instanceof HttpError) {
